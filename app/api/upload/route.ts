@@ -1,5 +1,6 @@
 import { env } from "@/lib/env";
 import { r2 } from "@/lib/r2";
+import { slugify } from "@/lib/utils";
 import { PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
   }
 
   const fileBuffer = await file.arrayBuffer();
-  const fileName = `${Date.now()}-${file.name}`;
+  const fileName = slugify(`${Date.now()}-${file.name}`);
 
   const payload = {
     Bucket: env.CLOUDFLARE_R2_BUCKET_NAME,
