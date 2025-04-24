@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { toast } from "sonner";
 import { Skeleton } from "./ui/skeleton";
 import { Loader2 } from "lucide-react";
+import axios from "axios";
 
 const ContentType = {
   Url: "url",
@@ -57,17 +58,24 @@ export function QRCodeGenerator() {
     if (data.type === ContentType.File) {
       try {
         setUploading(true);
-        const formData = new FormData();
-        formData.append("file", data.file);
 
         const response = await fetch("/api/upload", {
           method: "POST",
-          body: formData,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileName: data.file.name, fileType: data.file.type }),
         });
 
         const json = await response.json();
-        if ("url" in json) {
+
+        if ("signedUrl" in json && "url" in json) {
+          const response = await axios.put(json.signedUrl, data.file, {
+            headers: { "Content-Type": data.file.type },
+          });
+
+          console.log("File uploaded successfully:", response);
+
           setUrl(json.url);
+          toast.success("Arquivo enviado com sucesso");
         }
       } catch (error) {
         console.error("Error uploading file:", error);
