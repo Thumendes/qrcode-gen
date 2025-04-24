@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
   // Get the file extension from the file name
   const fileExtension = fileName.split(".").pop();
-  const fileKey = `${slugify(fileName.replace(fileExtension, ""))}.${fileExtension}`;
+  const fileKey = `${Date.now()}-${slugify(fileName.replace(fileExtension, ""))}.${fileExtension}`;
 
   const payload = {
     Bucket: env.CLOUDFLARE_R2_BUCKET_NAME,
